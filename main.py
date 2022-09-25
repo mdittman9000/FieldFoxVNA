@@ -4,6 +4,7 @@
 # This isn't the most user friendly, but makes nice plots quickly
 
 import matplotlib.pyplot as plt
+import os
 
 def import_data(filename):
     """
@@ -37,7 +38,7 @@ def import_data(filename):
 
     return frequency_data, sparam_data
 
-def graph_sparam(FILENAME, frequency_data, sparam_data, x_axis, y_axis):
+def graph_sparam(FILENAME, frequency_data, sparam_data, x_axis, y_axis, contains_phase, directory):
     """
     Graph sparameter data
     :param frequency_data:
@@ -54,21 +55,44 @@ def graph_sparam(FILENAME, frequency_data, sparam_data, x_axis, y_axis):
     axs.set_xlabel(x_axis, fontsize=10)
 
     # Scatter is better for phase data
-    plt.scatter(frequency_data, sparam_data)
-
-    # Plot function better for log mag data
-    #plt.plot(frequency_data, sparam_data)
+    if contains_phase:
+        plt.scatter(frequency_data, sparam_data)
+    else:
+        # Plot function better for log mag data
+        plt.plot(frequency_data, sparam_data)
 
     # Save the image
     export_filename = FILENAME.split(".")[0]
     plt.savefig(export_filename)
-    plt.show()
+    #plt.show()
+    plt.close()
 
-FILENAME = "data/lab1/PHS21.csv"
+#FILENAME = "data/lab2/1AS11.csv"
 
-frequency_data, sparam_data = import_data(FILENAME)
+directory = "data/lab2/"
 
-graph_sparam(FILENAME, frequency_data, sparam_data, "Frequency [GHz]", "$S_{21}$ [deg]")
+for filename in os.listdir(directory):
+
+    frequency_data, sparam_data = import_data(directory + filename)
+
+    contains_phase = False
+
+    y_axis_name = "" # "$S_{21}$ [dB]"
+
+    s_param_types = ["S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33"]
+
+    for s_param_type in s_param_types:
+        if s_param_type in filename:
+            y_axis_name =  "$_{" + s_param_type + "}$"
+
+    if "PHS" in filename:
+        contains_phase = True
+        y_axis_name = y_axis_name + "[deg]"
+    else:
+        y_axis_name = y_axis_name + "[dB]"
+
+
+    graph_sparam(filename, frequency_data, sparam_data, "Frequency [GHz]", y_axis_name, contains_phase, directory)
 
 #print(frequency_data, sparam_data)
 
