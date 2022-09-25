@@ -63,7 +63,7 @@ def graph_sparam(FILENAME, frequency_data, sparam_data, x_axis, y_axis, contains
 
     # Save the image
     export_filename = FILENAME.split(".")[0]
-    plt.savefig(export_filename)
+    plt.savefig(directory + export_filename)
     #plt.show()
     plt.close()
 
@@ -73,26 +73,32 @@ directory = "data/lab2/"
 
 for filename in os.listdir(directory):
 
-    frequency_data, sparam_data = import_data(directory + filename)
+    #print("Importing data from : " + directory + filename)
 
-    contains_phase = False
+    if ".csv" in filename:
 
-    y_axis_name = "" # "$S_{21}$ [dB]"
+        print("Importing data from : " + directory + filename)
 
-    s_param_types = ["S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33"]
+        frequency_data, sparam_data = import_data(directory + filename)
 
-    for s_param_type in s_param_types:
-        if s_param_type in filename:
-            y_axis_name =  "$_{" + s_param_type + "}$"
+        contains_phase = False
 
-    if "PHS" in filename:
-        contains_phase = True
-        y_axis_name = y_axis_name + "[deg]"
-    else:
-        y_axis_name = y_axis_name + "[dB]"
+        y_axis_name = "" # "$S_{21}$ [dB]"
+
+        s_param_types = ["S11", "S12", "S13", "S21", "S22", "S23", "S31", "S32", "S33"]
+
+        for s_param_type in s_param_types:
+            if s_param_type in filename:
+                y_axis_name =  "$_{" + s_param_type + "}$"
+
+        if "PHS" in filename:
+            contains_phase = True
+            y_axis_name = y_axis_name + "[deg]"
+        else:
+            y_axis_name = y_axis_name + "[dB]"
 
 
-    graph_sparam(filename, frequency_data, sparam_data, "Frequency [GHz]", y_axis_name, contains_phase, directory)
+        graph_sparam(filename, frequency_data, sparam_data, "Frequency [GHz]", y_axis_name, contains_phase, directory)
 
 #print(frequency_data, sparam_data)
 
